@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="myStats"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r96/three.min.js" integrity="sha512-NjX12CQ0AQVVlDqq2swO9HW1puo/zrUIWlyK1B+7qrb7LU0iVHugZCNxjyyffGnZxr4DXe+eC25duPOsiwzBdw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.7/dat.gui.min.js" integrity="sha512-LF8ZB1iTwi4Qvkm4pekHG4a437Y9Af5ZuwbnW4GTbAWQeR2E4KW8WF+xH8b9psevV7wIlDMx1MH9YfPqgKhA/Q==" crossorigin="anonymous"></script>
+    <script>
+        var stats;
+        var scene, camera, render;
+        var controlers;
+
+        var controls = new(function() {
+            this.addBuilding = function() {
+                console.log(Math.random() * (100 - 10));
+                let geometry = new THREE.CubeGeometry(2, Math.random() * (20 - 10), 2);
+                let material = new THREE.MeshNormalMaterial({
+                    wireframe: false
+                });
+                cube = new THREE.Mesh(geometry, material);
+                cube.name = "cube";
+                //cube.scale(1);
+                cube.position.set(Math.floor(Math.random() * (50 - 10)), 0, Math.floor(Math.random() * (20 - 10)));
+                scene.add(cube);
+
+                scene.add(cube);
+            }
+        });
+
+
+        var gui = new dat.GUI();
+        gui.add(controls, 'addBuilding');
+
+        function createStats() {
+            stats = new Stats();
+            stats.setMode(2); // 0: fps, 1: ms, 2memory
+            stats.domElement.style.position = "absolute";
+            stats.domElement.style.left = "100px";
+            stats.domElement.style.top = "10px";
+            document.getElementById("myStats").appendChild(stats.domElement);
+            return stats;
+        }
+
+        function createCamera() {
+            camera = new THREE.PerspectiveCamera(
+                75,
+                window.innerWidth / window.innerHeight,
+                1,
+                100
+            );
+            camera.position.set(0, 0, 30);
+        }
+
+        function createRenderer() {
+            renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(new THREE.Color(0xffffff));
+            document.body.appendChild(renderer.domElement);
+        }
+
+        function createPlane() {
+            var planeGeometry = new THREE.CubeGeometry(1000, 1000, 1, 1);
+            var planeMaterial = new THREE.MeshBasicMaterial({
+                color: 0x000000
+            });
+            var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+            plane.rotation.x = -0.5 * Math.PI;
+            scene.add(plane);
+        }
+
+        function init() {
+            //create scene
+            createCamera();
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0xffffff, 0.002);
+            createPlane();
+            createStats();
+
+            createRenderer();
+
+            //element render
+        }
+
+        function animate(time) {
+            stats.update();
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+
+        }
+
+        init();
+        requestAnimationFrame(animate);
+    </script>
+</body>
+
+</html>
